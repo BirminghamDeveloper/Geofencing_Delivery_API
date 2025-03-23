@@ -9,6 +9,8 @@ appcompat = "1.7.0"
 material = "1.12.0"
 activity = "1.10.1"
 constraintlayout = "2.2.1"
+
+lifecycleLivedataKtx = "2.8.1"
 navigationFragmentKtx = "2.8.9"
 navigationUiKtx = "2.8.9"
 googleAndroidLibrariesMapsplatformSecretsGradlePlugin = "2.0.1"
@@ -50,6 +52,7 @@ volley = { module = "com.android.volley:volley", version.ref = "volley" }
 dagger-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
+androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

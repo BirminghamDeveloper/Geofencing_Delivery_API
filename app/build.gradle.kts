@@ -75,6 +75,7 @@ dependencies {
 
     // DataStore
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
 
     // Room
     implementation(libs.room.runtime)
