@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.hashinology.geofencingapi.databinding.FragmentPermissionBinding
 import com.hashinology.geofencingapi.util.ExtensionFunctions.observeOnce
@@ -47,7 +48,7 @@ class PermissionFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                 findNavController().navigate(R.id.action_permissionFragment_to_add_geofence_graph)
                 sharedViewModel.saveFirstLaunch(false)
             }else{
-                findNavController().navigate(R.id.action_geofencesFragment_to_mapsFragment)
+                findNavController().navigate(R.id.action_permissionFragment_to_mapsFragment)
             }
         })
     }
@@ -62,16 +63,19 @@ class PermissionFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     }
 
     override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
+//        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)){
         if (EasyPermissions.somePermissionDenied(this, perms[0])){
             SettingsDialog.Builder(requireActivity()).build().show()
         }else{
-            Permissions.requestLocationPermission(this
-            )
+            Permissions.requestLocationPermission(this)
         }
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
-        Toast.makeText(requireContext(), "Permission Granted! Tap on 'Continue' Button to Proceed.", Toast.LENGTH_SHORT)
+        Toast.makeText(
+            requireContext(),
+            "Permission Granted! Tap on 'Continue' Button to Proceed.",
+            Toast.LENGTH_SHORT)
             .show()
     }
 

@@ -1,14 +1,12 @@
 package com.hashinology.geofencingapi.viewmodels
 
 import android.app.Application
-import androidx.datastore.core.DataStore
 import androidx.lifecycle.AndroidViewModel
-import com.hashinology.geofencingapi.DataStoreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.last
 import javax.inject.Inject
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.hashinology.geofencingapi.data.DataStoreRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -19,7 +17,10 @@ class SharedViewModel @Inject constructor(
 ): AndroidViewModel(application) {
     val app = application
 
-    // DataStore
+    var geoName = "Default"
+    var geoCountryCode = ""
+
+    // DataStore to create readfirstlaunch variable and converted from Flow to liveData
     val readFirstLaunch = dataStoreRepo.readfirstLaunch.asLiveData()
 
     fun saveFirstLaunch(firstLaunch: Boolean){
