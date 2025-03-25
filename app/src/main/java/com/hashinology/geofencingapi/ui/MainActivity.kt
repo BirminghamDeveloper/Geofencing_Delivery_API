@@ -1,11 +1,10 @@
-package com.hashinology.geofencingapi
+package com.hashinology.geofencingapi.ui
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import com.hashinology.geofencingapi.R
 import com.hashinology.geofencingapi.util.Permissions
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -16,8 +15,12 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
+        val navHostFragment = supportFragmentManager.
+            findFragmentById(R.id.navHostFragment) as NavHostFragment
+
+        val navController = navHostFragment.navController
         if (Permissions.hasLocationPermission(this)){
-            findNavController(R.id.navHostFragment).navigate(R.id.action_permissionFragment_to_mapsFragment)
+            navController.navigate(R.id.action_permissionFragment_to_mapsFragment)
         }
     }
 }

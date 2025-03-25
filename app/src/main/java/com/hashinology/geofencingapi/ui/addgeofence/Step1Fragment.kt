@@ -1,4 +1,4 @@
-package com.hashinology.geofencingapi
+package com.hashinology.geofencingapi.ui.addgeofence
 
 import android.annotation.SuppressLint
 import android.location.Geocoder
@@ -16,6 +16,7 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
+import com.hashinology.geofencingapi.R
 import com.hashinology.geofencingapi.databinding.FragmentStep1Binding
 import com.hashinology.geofencingapi.viewmodels.SharedViewModel
 import kotlinx.coroutines.launch

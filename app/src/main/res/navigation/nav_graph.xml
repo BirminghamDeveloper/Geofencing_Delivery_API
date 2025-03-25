@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/permissionFragment"
-        android:name="com.hashinology.geofencingapi.PermissionFragment"
+        android:name="com.hashinology.geofencingapi.ui.permisions.PermissionFragment"
         android:label="fragment_permission"
         tools:layout="@layout/fragment_permission" >
         <action
@@ -23,7 +23,7 @@
     </fragment>
     <fragment
         android:id="@+id/mapsFragment"
-        android:name="com.hashinology.geofencingapi.MapsFragment"
+        android:name="com.hashinology.geofencingapi.ui.maps.MapsFragment"
         android:label="fragment_maps"
         tools:layout="@layout/fragment_maps" >
         <action
@@ -36,7 +36,7 @@
     <navigation android:id="@+id/add_geofence_graph" app:startDestination="@id/step1Fragment">
         <fragment
             android:id="@+id/step1Fragment"
-            android:name="com.hashinology.geofencingapi.Step1Fragment"
+            android:name="com.hashinology.geofencingapi.ui.addgeofence.Step1Fragment"
             android:label="fragment_step1"
             tools:layout="@layout/fragment_step1" >
             <action
@@ -52,7 +52,7 @@
         </fragment>
         <fragment
             android:id="@+id/step2Fragment"
-            android:name="com.hashinology.geofencingapi.Step2Fragment"
+            android:name="com.hashinology.geofencingapi.ui.addgeofence.Step2Fragment"
             android:label="fragment_step2"
             tools:layout="@layout/fragment_step2" >
             <action
@@ -68,7 +68,7 @@
         </fragment>
         <fragment
             android:id="@+id/step3Fragment"
-            android:name="com.hashinology.geofencingapi.Step3Fragment"
+            android:name="com.hashinology.geofencingapi.ui.addgeofence.Step3Fragment"
             android:label="fragment_step3"
             tools:layout="@layout/fragment_step3" >
             <action
@@ -81,7 +81,7 @@
     </navigation>
     <fragment
         android:id="@+id/geofencesFragment"
-        android:name="com.hashinology.geofencingapi.GeofencesFragment"
+        android:name="com.hashinology.geofencingapi.ui.geofence.GeofencesFragment"
         android:label="fragment_geofences"
         tools:layout="@layout/fragment_geofences" >
         <action
@@ -91,5 +91,11 @@
             app:popUpTo="@id/geofencesFragment"
             app:popUpToInclusive="true" />
     </fragment>
+    <action
+        android:id="@+id/action_step1Fragment_to_mapsFragment"
+        app:destination="@id/mapsFragment"
+        app:popUpToInclusive="true"
+        app:launchSingleTop="true"
+        app:popUpTo="@id/step1Fragment" />
 
 </navigation>

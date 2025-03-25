@@ -1,4 +1,4 @@
-package com.hashinology.geofencingapi
+package com.hashinology.geofencingapi.ui.permisions
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,8 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.hashinology.geofencingapi.R
 import com.hashinology.geofencingapi.databinding.FragmentPermissionBinding
 import com.hashinology.geofencingapi.util.ExtensionFunctions.observeOnce
 import com.hashinology.geofencingapi.util.Permissions

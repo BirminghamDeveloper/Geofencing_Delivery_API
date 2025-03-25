@@ -1,10 +1,11 @@
-package com.hashinology.geofencingapi
+package com.hashinology.geofencingapi.ui.geofence
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.hashinology.geofencingapi.R
 
 class GeofencesFragment : Fragment() {
 

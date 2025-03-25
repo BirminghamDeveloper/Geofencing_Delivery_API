@@ -1,4 +1,4 @@
-package com.hashinology.geofencingapi
+package com.hashinology.geofencingapi.ui.maps
 
 import androidx.fragment.app.Fragment
 
@@ -14,6 +14,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.hashinology.geofencingapi.R
 import com.hashinology.geofencingapi.databinding.FragmentMapsBinding
 
 class MapsFragment : Fragment(), OnMapReadyCallback {

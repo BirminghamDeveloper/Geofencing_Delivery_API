@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Step1Fragment">
-
+    tools:context=".ui.addgeofence.Step1Fragment">
 
     <TextView
         android:id="@+id/tvGeofence"
