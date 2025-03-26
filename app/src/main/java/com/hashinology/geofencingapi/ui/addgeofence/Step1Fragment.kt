@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.common.api.ApiException
@@ -19,6 +20,7 @@ import com.google.android.libraries.places.api.net.PlacesClient
 import com.hashinology.geofencingapi.R
 import com.hashinology.geofencingapi.databinding.FragmentStep1Binding
 import com.hashinology.geofencingapi.viewmodels.SharedViewModel
+import com.hashinology.geofencingapi.viewmodels.Step1ViewModel
 import kotlinx.coroutines.launch
 
 
@@ -27,6 +29,7 @@ class Step1Fragment : Fragment() {
     private val binding get() = _binding!!
 
     private val sharedVM: SharedViewModel by activityViewModels()
+    private val step1VM: Step1ViewModel by viewModels()
 
     private lateinit var geoCoder: Geocoder
     private lateinit var placeClient: PlacesClient
@@ -44,6 +47,11 @@ class Step1Fragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentStep1Binding.inflate(inflater, container, false)
+
+        binding.sharedViewModel = sharedVM
+        binding.step1ViewModel = step1VM
+
+        binding.lifecycleOwner = this
 
         binding.step1Back.setOnClickListener {
             onStep1BackClicked()
@@ -75,16 +83,23 @@ class Step1Fragment : Fragment() {
                         1
                     )
                     sharedVM.geoCountryCode = address!![0].countryCode
+                    enabledNextButton()
                 }else{
                     val exception = task.exception
                     if (exception is ApiException){
                         Log.e("Step1Fragment", "Exception: ${exception.statusCode.toString()}", )
                     }
+                    enabledNextButton()
                 }
             }
         }
     }
 
+    private fun enabledNextButton(){
+        if (sharedVM.geoName.isNotEmpty()){
+            step1VM.enableNextButton(true)
+        }
+    }
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
