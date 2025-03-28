@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.model.LatLng
 import com.hashinology.geofencingapi.data.DataStoreRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,6 +25,11 @@ class SharedViewModel @Inject constructor(
     var geoID = 0L
     var geoName = "Default"
     var geoCountryCode = ""
+    var geoLocationName = "Search a City"
+    var geoLatLng = LatLng(0.0, 0.0)
+
+    var geoCitySelected = false
+
 
     // DataStore to create readfirstlaunch variable and converted from Flow to liveData
     val readFirstLaunch = dataStoreRepo.readfirstLaunch.asLiveData()
