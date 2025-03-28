@@ -83,11 +83,12 @@ class Step1Fragment : Fragment() {
                         1
                     )
                     sharedVM.geoCountryCode = address!![0].countryCode
+                    Log.e("Step1Fragment", sharedVM.geoCountryCode )
                     enabledNextButton()
                 }else{
                     val exception = task.exception
                     if (exception is ApiException){
-                        Log.e("Step1Fragment", "Exception: ${exception.statusCode.toString()}", )
+                        Log.e("Step1Fragment", exception.statusCode.toString() )
                     }
                     enabledNextButton()
                 }

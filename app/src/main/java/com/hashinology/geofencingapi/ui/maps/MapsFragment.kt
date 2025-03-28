@@ -31,7 +31,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         _binding = FragmentMapsBinding.inflate(inflater, container, false)
 
         binding.floatingActionButton.setOnClickListener {
-            findNavController().navigate(R.id.action_mapsFragment_to_geofencesFragment)
+            findNavController().navigate(R.id.action_mapsFragment_to_add_geofence_graph)
         }
 
         return binding.root
