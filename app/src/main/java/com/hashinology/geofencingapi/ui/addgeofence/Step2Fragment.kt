@@ -1,13 +1,14 @@
 package com.hashinology.geofencingapi.ui.addgeofence
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -26,6 +27,7 @@ import com.hashinology.geofencingapi.R
 import com.hashinology.geofencingapi.adapters.PredictionsAdapter
 import com.hashinology.geofencingapi.databinding.FragmentStep2Binding
 import com.hashinology.geofencingapi.util.ExtensionFunctions.hide
+import com.hashinology.geofencingapi.util.NetworkListner
 import com.hashinology.geofencingapi.viewmodels.SharedViewModel
 import com.hashinology.geofencingapi.viewmodels.Step2ViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -38,9 +40,11 @@ class Step2Fragment : Fragment() {
     private val predictionAdapter by lazy { PredictionsAdapter() }
 
     private val sharedVM: SharedViewModel by activityViewModels()
-    private val step2VML: Step2ViewModel by viewModels()
+    private val step2VM: Step2ViewModel by viewModels()
 
     private lateinit var placesClient: PlacesClient
+
+    private lateinit var networkListener: NetworkListner
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,17 +53,21 @@ class Step2Fragment : Fragment() {
         placesClient = Places.createClient(requireContext())
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentStep2Binding.inflate(inflater, container, false)
+        binding.sharedViewModel = sharedVM
+        binding.step2ViewModel = step2VM
+        binding.lifecycleOwner = this
 
-        binding.predictionsRecyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = predictionAdapter
-        }
+        checkInternetConnection()
+
+        binding.predictionsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.predictionsRecyclerView.adapter = predictionAdapter
 
         binding.geofenceLocationEt.doOnTextChanged { text, _, _, _ ->
             handleNextButton(text)
@@ -80,85 +88,105 @@ class Step2Fragment : Fragment() {
     }
 
     private fun handleNextButton(text: CharSequence?) {
-        if(text.isNullOrEmpty()){
-            step2VML.enabledNextButton(false)
+        if (text.isNullOrEmpty()) {
+            step2VM.enabledNextButton(false)
         }
     }
 
     private fun subscribeToObservers() {
         lifecycleScope.launch {
-            predictionAdapter.placeId.collectLatest { placeID ->
-                if(placeID.isNotEmpty()){
-                    onCitySelected(placeID)
+            predictionAdapter.placeId.collectLatest { placeId ->
+                if (placeId.isNotEmpty()) {
+                    onCitySelected(placeId)
                 }
             }
         }
     }
 
-    private fun onCitySelected(placeID: String) {
+    private fun onCitySelected(placeId: String) {
         val placeFields = listOf(
             Place.Field.ID,
             Place.Field.LAT_LNG,
-            Place.Field.DISPLAY_NAME
+            Place.Field.NAME
         )
-
-        val request = FetchPlaceRequest.builder(
-            placeID,
-            placeFields
-        ).build()
+        val request = FetchPlaceRequest.builder(placeId, placeFields).build()
         placesClient.fetchPlace(request)
-            .addOnSuccessListener { reposne ->
-                sharedVM.geoLatLng = reposne.place.latLng!!
-                sharedVM.geoLocationName = reposne.place.displayName!!
+            .addOnSuccessListener { response ->
+                sharedVM.geoLatLng = response.place.latLng!!
+                sharedVM.geoLocationName = response.place.name!!
                 sharedVM.geoCitySelected = true
-
                 binding.geofenceLocationEt.setText(sharedVM.geoLocationName)
                 binding.geofenceLocationEt.setSelection(sharedVM.geoLocationName.length)
                 binding.predictionsRecyclerView.hide()
-                step2VML.enabledNextButton(true)
 
                 Log.d("Step2fragment", sharedVM.geoLatLng.toString())
                 Log.d("Step2fragment", sharedVM.geoLocationName)
                 Log.d("Step2fragment", sharedVM.geoCitySelected.toString())
+
+                step2VM.enabledNextButton(true)
             }
             .addOnFailureListener { exception ->
-                Log.e("Step2fragment", exception.message.toString() )
+                Log.e("Step2Fragment", exception.message.toString())
             }
     }
 
     private fun getPlaces(text: CharSequence?) {
-        if (sharedVM.checkDeviceLocationSetting(requireContext())){
+        if (sharedVM.checkDeviceLocationSetting(requireContext())) {
             lifecycleScope.launch {
-                if (text.isNullOrEmpty()){
+                if (text.isNullOrEmpty()) {
                     predictionAdapter.setData(emptyList())
-                }else{
+                } else {
                     val token = AutocompleteSessionToken.newInstance()
 
-                    val request = FindAutocompletePredictionsRequest.builder()
-                        .setCountries(sharedVM.geoCountryCode)
-                        // .setTypeFilter is Deprecated
-                        .setTypeFilter(TypeFilter.CITIES)
-                        .setSessionToken(token)
-                        .setQuery(text.toString())
-                        .build()
+                    val request =
+                        FindAutocompletePredictionsRequest.builder()
+                            .setCountries(sharedVM.geoCountryCode)
+                            .setTypeFilter(TypeFilter.CITIES)
+                            .setSessionToken(token)
+                            .setQuery(text.toString())
+                            .build()
                     placesClient.findAutocompletePredictions(request)
                         .addOnSuccessListener { response ->
                             predictionAdapter.setData(response.autocompletePredictions)
+                            binding.predictionsRecyclerView.scheduleLayoutAnimation()
                         }
                         .addOnFailureListener { exception: Exception? ->
                             if (exception is ApiException) {
-                                Log.e("Step2Fragment", exception.statusCode.toString() )
+                                Log.e("Step2Fragment", exception.statusCode.toString())
                             }
                         }
                 }
             }
-        }else{
-            Toast.makeText(requireContext(), "Please Enable Location Settings.", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(
+                requireContext(),
+                "Please Enable Location Settings.",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun checkInternetConnection() {
+        lifecycleScope.launch {
+            networkListener = NetworkListner()
+            networkListener.checkNetworkAvailability(requireContext())
+                .collect { online ->
+                    Log.d("Internet", online.toString())
+                    step2VM.setInternetAvailable(online)
+                    if (online && sharedVM.geoCitySelected) {
+                        step2VM.enabledNextButton(true)
+                    } else {
+                        step2VM.enabledNextButton(false)
+                    }
+                }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 }
+
+

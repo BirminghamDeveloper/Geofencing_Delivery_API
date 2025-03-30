@@ -45,7 +45,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap!!
-        val sydney = LatLng(-34.0, 151.0)
+        val sydney = LatLng(52.4822694,-1.8900078)
         map.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
         map.moveCamera(CameraUpdateFactory.newLatLng(sydney))
     }
