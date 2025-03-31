@@ -98,4 +98,11 @@
         app:launchSingleTop="true"
         app:popUpTo="@id/step1Fragment" />
 
+    <action
+        android:id="@+id/action_step3Fragment_to_mapsFragment"
+        app:destination="@id/mapsFragment"
+        app:popUpToInclusive="true"
+        app:launchSingleTop="true"
+        app:popUpTo="@id/step1Fragment" />
+
 </navigation>

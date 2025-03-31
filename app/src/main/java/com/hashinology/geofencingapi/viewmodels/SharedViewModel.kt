@@ -28,7 +28,10 @@ class SharedViewModel @Inject constructor(
     var geoLocationName = "Search a City"
     var geoLatLng = LatLng(0.0, 0.0)
 
+    var GeoRadius = 500f
+
     var geoCitySelected = false
+    var geofenceReady = false
 
 
     // DataStore to create readfirstlaunch variable and converted from Flow to liveData
