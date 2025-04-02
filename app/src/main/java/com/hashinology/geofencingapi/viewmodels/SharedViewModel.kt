@@ -6,6 +6,7 @@ import android.location.LocationManager
 import android.os.Build
 import android.provider.Settings
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import androidx.lifecycle.asLiveData
@@ -28,7 +29,7 @@ class SharedViewModel @Inject constructor(
     var geoLocationName = "Search a City"
     var geoLatLng = LatLng(0.0, 0.0)
 
-    var GeoRadius = 500f
+    var GeoRadius = MutableLiveData<Float>(500f)
 
     var geoCitySelected = false
     var geofenceReady = false

@@ -50,7 +50,6 @@ class Step1Fragment : Fragment() {
 
         binding.sharedViewModel = sharedVM
         binding.step1ViewModel = step1VM
-
         binding.lifecycleOwner = this
 
         binding.step1Back.setOnClickListener {

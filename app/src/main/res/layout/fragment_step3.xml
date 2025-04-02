@@ -48,6 +48,7 @@
             android:textColor="@color/black"
             android:textSize="40sp"
             android:textStyle="bold"
+            app:formattedGeoRadius="@{sharedViewModel.geoRadius}"
             app:layout_constraintBottom_toTopOf="@+id/slider"
             app:layout_constraintEnd_toEndOf="@+id/slider"
             app:layout_constraintStart_toStartOf="@+id/slider" />
@@ -60,6 +61,7 @@
             android:progress="0"
             android:layout_marginStart="32dp"
             android:layout_marginEnd="32dp"
+            app:bindSeekBar="@{sharedViewModel}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

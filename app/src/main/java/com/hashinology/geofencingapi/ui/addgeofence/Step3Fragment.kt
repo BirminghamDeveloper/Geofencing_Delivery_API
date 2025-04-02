@@ -30,6 +30,7 @@ class Step3Fragment : Fragment() {
         }
 
         binding.step3Done.setOnClickListener {
+            sharedVM.geofenceReady = true
             findNavController().navigate(R.id.action_step3Fragment_to_mapsFragment)
         }
 
