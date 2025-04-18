@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -27,7 +26,7 @@ import com.hashinology.geofencingapi.R
 import com.hashinology.geofencingapi.adapters.PredictionsAdapter
 import com.hashinology.geofencingapi.databinding.FragmentStep2Binding
 import com.hashinology.geofencingapi.util.ExtensionFunctions.hide
-import com.hashinology.geofencingapi.util.NetworkListner
+import com.hashinology.geofencingapi.util.NetworkListener
 import com.hashinology.geofencingapi.viewmodels.SharedViewModel
 import com.hashinology.geofencingapi.viewmodels.Step2ViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -44,7 +43,7 @@ class Step2Fragment : Fragment() {
 
     private lateinit var placesClient: PlacesClient
 
-    private lateinit var networkListener: NetworkListner
+    private lateinit var networkListener: NetworkListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +52,6 @@ class Step2Fragment : Fragment() {
         placesClient = Places.createClient(requireContext())
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -166,11 +164,10 @@ class Step2Fragment : Fragment() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     private fun checkInternetConnection() {
         lifecycleScope.launch {
-            networkListener = NetworkListner()
-            networkListener.checkNetworkAvailability(requireContext())
+            networkListener = NetworkListener()
+            networkListener.startListening(requireContext())
                 .collect { online ->
                     Log.d("Internet", online.toString())
                     step2VM.setInternetAvailable(online)
@@ -185,6 +182,7 @@ class Step2Fragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        networkListener.stopListening(requireContext())
         _binding = null
     }
 }
