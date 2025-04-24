@@ -13,3 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Ignore debug and release Google Maps API key files
+app/src/debug/res/values/google_maps_api.xml
+app/src/release/res/values/google_maps_api.xml
