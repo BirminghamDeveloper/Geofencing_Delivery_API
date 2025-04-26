@@ -96,7 +96,7 @@
         app:destination="@id/mapsFragment"
         app:popUpToInclusive="true"
         app:launchSingleTop="true"
-        app:popUpTo="@id/step1Fragment" />
+        app:popUpTo="@id/step3Fragment" />
 
     <action
         android:id="@+id/action_step3Fragment_to_mapsFragment"

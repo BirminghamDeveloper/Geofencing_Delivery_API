@@ -4,37 +4,26 @@ import android.annotation.SuppressLint
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import com.google.android.material.slider.Slider
 import com.hashinology.geofencingapi.viewmodels.SharedViewModel
 import com.hashinology.geofencingapi.R
 
 
-@BindingAdapter("bindSeekBar")
-fun bindSeekBar(seekBar: SeekBar, sharedVM: SharedViewModel) {
-    // Initialize SeekBar progress from ViewModel
-    val initialProgress = (sharedVM.GeoRadius.value?.toInt() ?: 500) / 500
-    seekBar.progress = initialProgress
-
-    seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-        override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-            if (fromUser) {
-                var value = 500 + (progress * 500)  // Convert progress to actual radius [[3]][[7]]
-                sharedVM.GeoRadius.value = value.toFloat()
-            }
-        }
-
-        override fun onStartTrackingTouch(seekBar: SeekBar) {}
-        override fun onStopTrackingTouch(seekBar: SeekBar) {}
-    })
+@BindingAdapter("updateSliderValueTextView", "getGeoRadius", requireAll = true)
+fun Slider.updateSliderValue(textView: TextView, sharedViewModel: SharedViewModel) {
+    updateSliderValueTextView(sharedViewModel.geoRadius , textView)
+    this.addOnChangeListener { _, value, _ ->
+        sharedViewModel.geoRadius = value
+        updateSliderValueTextView(sharedViewModel.geoRadius, textView)
+    }
 }
 
-@SuppressLint("StringFormatMatches")
-@BindingAdapter("formattedGeoRadius")
-fun TextView.setFormattedGeoRadius(geoRadius: Float) {
-    val value = geoRadius.toDouble()
-    val kilometers = value / 1000
-    text = if (value >= 1000) {
-        context.getString(R.string.display_kilometers, kilometers)
+fun Slider.updateSliderValueTextView(geoRadius: Float, textView: TextView) {
+    val kilometers = geoRadius / 1000
+    if (geoRadius >= 1000f) {
+        textView.text = context.getString(R.string.display_kilometers, kilometers.toString())
     } else {
-        context.getString(R.string.display_meters, value.toInt())
+        textView.text = context.getString(R.string.display_meters, geoRadius.toString())
     }
+    this.value = geoRadius
 }

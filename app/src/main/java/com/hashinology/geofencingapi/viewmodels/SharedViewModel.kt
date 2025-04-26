@@ -29,7 +29,7 @@ class SharedViewModel @Inject constructor(
     var geoLocationName = "Search a City"
     var geoLatLng = LatLng(0.0, 0.0)
 
-    var GeoRadius = MutableLiveData<Float>(500f)
+    var geoRadius: Float = 500f
 
     var geoCitySelected = false
     var geofenceReady = false

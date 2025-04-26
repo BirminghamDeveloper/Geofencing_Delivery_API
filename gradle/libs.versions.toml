@@ -1,5 +1,5 @@
 [versions]
-agp = "8.8.2"
+agp = "8.7.3"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -61,4 +61,4 @@ google-android-libraries-mapsplatform-secrets-gradle-plugin = { id = "com.google
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 androidx-navigation-safe-args = { id = "androidx.navigation.safeargs.kotlin", version.ref = "safeargs" }
 dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid" }
-kotlin-parcelize = { id = "kotlin-parcelize" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
