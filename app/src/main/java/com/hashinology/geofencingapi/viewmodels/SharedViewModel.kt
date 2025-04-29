@@ -13,13 +13,16 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.hashinology.geofencingapi.data.DataStoreRepository
+import com.hashinology.geofencingapi.data.GeofenceEntity
+import com.hashinology.geofencingapi.data.GeofenceRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SharedViewModel @Inject constructor(
     application: Application,
-    private val dataStoreRepo: DataStoreRepository
+    private val dataStoreRepo: DataStoreRepository,
+    private val geofenceRepository: GeofenceRepository
 ): AndroidViewModel(application) {
     val app = application
 
@@ -33,6 +36,7 @@ class SharedViewModel @Inject constructor(
 
     var geoCitySelected = false
     var geofenceReady = false
+    var geofencePrepared = false
 
 
     // DataStore to create readfirstlaunch variable and converted from Flow to liveData
@@ -43,6 +47,16 @@ class SharedViewModel @Inject constructor(
             dataStoreRepo.saveFirstLaunch(firstLaunch)
         }
     }
+    // Database
+    val readGeofences = geofenceRepository.readGeofences.asLiveData()
+    fun addGeofence(geofenceEntity: GeofenceEntity) =
+        viewModelScope.launch(Dispatchers.IO) {
+            geofenceRepository.addGeofence(geofenceEntity)
+        }
+    fun removeGeofence(geofenceEntity: GeofenceEntity) =
+        viewModelScope.launch(Dispatchers.IO) {
+            geofenceRepository.removeGeofence(geofenceEntity)
+        }
 
     fun checkDeviceLocationSetting(context: Context): Boolean{
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
