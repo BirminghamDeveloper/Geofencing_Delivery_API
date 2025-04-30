@@ -1,6 +1,7 @@
 package com.hashinology.geofencingapi.ui.maps
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import androidx.fragment.app.Fragment
 
 import android.os.Bundle
@@ -18,6 +19,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
@@ -34,13 +36,15 @@ import com.vmadalin.easypermissions.dialogs.SettingsDialog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMapLongClickListener, EasyPermissions.PermissionCallbacks {
+class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMapLongClickListener,
+    EasyPermissions.PermissionCallbacks, GoogleMap.SnapshotReadyCallback {
     private var _binding: FragmentMapsBinding? = null
     private val binding get() = _binding!!
 
     private val shareedVM: SharedViewModel by activityViewModels()
 
     private lateinit var map: GoogleMap
+    private lateinit var circle: Circle
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -126,6 +130,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMapLongClickLis
             if (shareedVM.checkDeviceLocationSetting(requireContext())){
                 drawCircle(location)
                 drawMarker(location)
+                zoomToGeofence(circle.center, circle.radius.toFloat())
+                delay(1500)
+                map.snapshot(this@MapsFragment)
+                delay(2000)
+                shareedVM.addGeofenceToDatabase(location)
             }else{
                 Toast.makeText(requireContext(), "Please Enable Location Settings..", Toast.LENGTH_SHORT).show()
             }
@@ -133,7 +142,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMapLongClickLis
     }
 
     private fun drawCircle(location: LatLng) {
-        map.addCircle(
+        circle = map.addCircle(
             CircleOptions()
                 .center(location)
                 .radius(shareedVM.geoRadius.toDouble())
@@ -146,6 +155,18 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMapLongClickLis
             MarkerOptions().position(location).title(shareedVM.geoName)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
         )
+    }
+
+    private fun zoomToGeofence(center: LatLng, radius: Float) {
+        map.animateCamera(
+            CameraUpdateFactory.newLatLngBounds(
+                shareedVM.getBoounds(center, radius), 10
+            ), 1000, null
+        )
+    }
+
+    override fun onSnapshotReady(snapshot: Bitmap?) {
+        shareedVM.geoSnapshot = snapshot
     }
 
     override fun onRequestPermissionsResult(
@@ -175,5 +196,4 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMapLongClickLis
         super.onDestroy()
         _binding = null
     }
-
 }
