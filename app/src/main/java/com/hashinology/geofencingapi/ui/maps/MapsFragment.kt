@@ -26,6 +26,8 @@ import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
 import com.hashinology.geofencingapi.R
 import com.hashinology.geofencingapi.databinding.FragmentMapsBinding
+import com.hashinology.geofencingapi.util.ExtensionFunctions.disable
+import com.hashinology.geofencingapi.util.ExtensionFunctions.enable
 import com.hashinology.geofencingapi.util.ExtensionFunctions.hide
 import com.hashinology.geofencingapi.util.ExtensionFunctions.show
 import com.hashinology.geofencingapi.util.Permissions.hasBackgroundLocationPermission
@@ -81,7 +83,10 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMapLongClickLis
             isMyLocationButtonEnabled = true
         }
         onGeofenceReady()
+        observeDatabase()
     }
+
+
 
     private fun onGeofenceReady() {
         if (shareedVM.geofenceReady){
@@ -113,6 +118,16 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMapLongClickLis
         )
     }
 
+    private fun observeDatabase() {
+        shareedVM.readGeofences.observe(viewLifecycleOwner, { geofenceEntity ->
+            map.clear()
+            geofenceEntity.forEach{ geofence ->
+                drawCircle(LatLng(geofence.latitude, geofence.longitude), geofence.radius)
+                drawMarker(LatLng(geofence.latitude, geofence.longitude), geofence.name)
+            }
+        })
+    }
+
     override fun onMapLongClick(location: LatLng) {
         if (hasBackgroundLocationPermission(requireContext())){
             if (shareedVM.geofencePrepared){
@@ -128,31 +143,45 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMapLongClickLis
     private fun setupGeofence(location: LatLng) {
         lifecycleScope.launch { 
             if (shareedVM.checkDeviceLocationSetting(requireContext())){
-                drawCircle(location)
-                drawMarker(location)
+                binding.addGeofenceFab.disable()
+                binding.addGeofenceFab.disable()
+                binding.geofenceProgressBar.show()
+
+                drawCircle(location, shareedVM.geoRadius)
+                drawMarker(location, shareedVM.geoName)
                 zoomToGeofence(circle.center, circle.radius.toFloat())
+
                 delay(1500)
                 map.snapshot(this@MapsFragment)
+                delay(5000)
+                if(shareedVM.geoSnapshot != null){
+                    shareedVM.addGeofenceToDatabase(location)
+                }
                 delay(2000)
-                shareedVM.addGeofenceToDatabase(location)
+                shareedVM.startGeofence(location.latitude, location.longitude)
+                shareedVM.resetSharedValue()
+
+                binding.addGeofenceFab.enable()
+                binding.addGeofenceFab.enable()
+                binding.geofenceProgressBar.hide()
             }else{
                 Toast.makeText(requireContext(), "Please Enable Location Settings..", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun drawCircle(location: LatLng) {
+    private fun drawCircle(location: LatLng, radius: Float) {
         circle = map.addCircle(
             CircleOptions()
                 .center(location)
-                .radius(shareedVM.geoRadius.toDouble())
+                .radius(radius.toDouble())
                 .strokeColor(ContextCompat.getColor(requireContext(), R.color.blue_700))
         )
     }
 
-    private fun drawMarker(location: LatLng) {
+    private fun drawMarker(location: LatLng, name: String) {
         map.addMarker(
-            MarkerOptions().position(location).title(shareedVM.geoName)
+            MarkerOptions().position(location).title(name)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
         )
     }

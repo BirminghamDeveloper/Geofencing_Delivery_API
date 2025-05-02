@@ -29,7 +29,8 @@
         android:src="@drawable/ic_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:tint="@color/white" />
+        app:tint="@color/white"
+        tools:ignore="ContentDescription" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/geofences_fab"
@@ -44,7 +45,8 @@
         app:layout_constraintBottom_toTopOf="@+id/add_geofence_fab"
         app:layout_constraintEnd_toEndOf="@+id/add_geofence_fab"
         app:layout_constraintStart_toStartOf="@+id/add_geofence_fab"
-        app:srcCompat="@drawable/ic_history" />
+        app:srcCompat="@drawable/ic_history"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/infoMessage_textView"
