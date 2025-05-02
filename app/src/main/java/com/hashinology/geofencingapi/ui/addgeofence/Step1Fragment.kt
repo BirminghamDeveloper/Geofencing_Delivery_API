@@ -22,6 +22,7 @@ import com.hashinology.geofencingapi.databinding.FragmentStep1Binding
 import com.hashinology.geofencingapi.viewmodels.SharedViewModel
 import com.hashinology.geofencingapi.viewmodels.Step1ViewModel
 import kotlinx.coroutines.launch
+import java.io.IOException
 
 
 class Step1Fragment : Fragment() {
@@ -74,16 +75,21 @@ class Step1Fragment : Fragment() {
             val placeResponse = placeClient.findCurrentPlace(request)
             placeResponse.addOnCompleteListener { task ->
                 if(task.isSuccessful){
-                    val reposnse = task.result
-                    val latlng = reposnse.placeLikelihoods[0].place.latLng!!
-                    val address = geoCoder.getFromLocation(
-                        latlng.latitude,
-                        latlng.longitude,
-                        1
-                    )
-                    sharedVM.geoCountryCode = address!![0].countryCode
-                    Log.e("Step1Fragment", sharedVM.geoCountryCode )
-                    enabledNextButton()
+                    try {
+                        val reposnse = task.result
+                        val latlng = reposnse.placeLikelihoods[0].place.latLng!!
+                        val address = geoCoder.getFromLocation(
+                            latlng.latitude,
+                            latlng.longitude,
+                            1
+                        )
+                        sharedVM.geoCountryCode = address!![0].countryCode
+                        Log.e("Step1Fragment", sharedVM.geoCountryCode )
+                    } catch (exception: IOException){
+                        Log.e("Step1Fragment", "getFromLocation: Failed", )
+                    }finally {
+                        enabledNextButton()
+                    }
                 }else{
                     val exception = task.exception
                     if (exception is ApiException){
