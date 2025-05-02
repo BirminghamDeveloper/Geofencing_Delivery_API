@@ -54,7 +54,7 @@ class SharedViewModel @Inject constructor(
     var geoCitySelected = false
     var geofenceReady = false
     var geofencePrepared = false
-    var geofenceRemoved = false
+//    var geofenceRemoved = false
 
     fun resetSharedValue(){
         geoID = 0L
@@ -67,7 +67,7 @@ class SharedViewModel @Inject constructor(
         geoCitySelected = false
         geofenceReady = false
         geofencePrepared = false
-        geofenceRemoved = false
+//        geofenceRemoved = false
     }
 
     // DataStore to create readfirstlaunch variable and converted from Flow to liveData

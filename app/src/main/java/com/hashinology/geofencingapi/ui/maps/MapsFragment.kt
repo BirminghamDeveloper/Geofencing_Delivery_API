@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -47,6 +48,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMapLongClickLis
 
     private lateinit var map: GoogleMap
     private lateinit var circle: Circle
+
+    private val args by navArgs<MapsFragmentArgs>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -84,9 +87,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMapLongClickLis
         }
         onGeofenceReady()
         observeDatabase()
+        backFromGeofencesFragment()
     }
-
-
 
     private fun onGeofenceReady() {
         if (shareedVM.geofenceReady){
@@ -126,6 +128,16 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMapLongClickLis
                 drawMarker(LatLng(geofence.latitude, geofence.longitude), geofence.name)
             }
         })
+    }
+
+    private fun backFromGeofencesFragment() {
+        if (args.geofenceEntity != null){
+            val selectedGeofence = LatLng(
+                args.geofenceEntity!!.latitude,
+                args.geofenceEntity!!.longitude
+            )
+            zoomToGeofence(selectedGeofence, args.geofenceEntity!!.radius)
+        }
     }
 
     override fun onMapLongClick(location: LatLng) {

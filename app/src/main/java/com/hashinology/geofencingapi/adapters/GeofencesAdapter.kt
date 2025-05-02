@@ -6,11 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.hashinology.geofencingapi.data.GeofenceEntity
 import com.hashinology.geofencingapi.databinding.GeofencesRowLayoutBinding
+import com.hashinology.geofencingapi.ui.geofence.GeofencesFragmentDirections
 import com.hashinology.geofencingapi.util.MyDiffutil
 import com.hashinology.geofencingapi.viewmodels.SharedViewModel
 import kotlinx.coroutines.launch
@@ -46,6 +48,10 @@ class GeofencesAdapter(private val sharedVM: SharedViewModel): RecyclerView.Adap
             removeItem(holder, position)
         }
 
+        holder.binding.snapshotImageView.setOnClickListener {
+            val action = GeofencesFragmentDirections.actionGeofencesFragmentToMapsFragment(currentGeofence)
+            holder.itemView.findNavController().navigate(action)
+        }
     }
 
     private fun removeItem(holder: GeofencesAdapter.MyViewHolder, position: Int) {
@@ -54,7 +60,6 @@ class GeofencesAdapter(private val sharedVM: SharedViewModel): RecyclerView.Adap
                 sharedVM.stopGeofence(listOf(geofenceEntityList[position].geoId))
             if (geofenceStopped){
                 sharedVM.removeGeofence(geofenceEntity = geofenceEntityList[position])
-                sharedVM.geofenceRemoved = true
                 showSnackBar(holder, geofenceEntityList[position])
             }else{
                 Log.d("GeofenceAdapter", "Geofence NOT REMOVED! ")
@@ -81,7 +86,6 @@ class GeofencesAdapter(private val sharedVM: SharedViewModel): RecyclerView.Adap
             removedItem.latitude,
             removedItem.longitude
         )
-        sharedVM.geofenceRemoved = false
     }
 
     override fun getItemCount(): Int {

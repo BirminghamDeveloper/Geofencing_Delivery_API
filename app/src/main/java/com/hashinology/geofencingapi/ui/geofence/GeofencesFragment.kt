@@ -53,6 +53,7 @@ class GeofencesFragment : Fragment() {
     private fun observeDatabase() {
         sharedVM.readGeofences.observe(viewLifecycleOwner, {
             geofencesAdapter.setData(it)
+            binding.geofencesRecyclerView.scheduleLayoutAnimation()
         })
     }
 
