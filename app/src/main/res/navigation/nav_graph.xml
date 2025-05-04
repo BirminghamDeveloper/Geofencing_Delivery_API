@@ -61,11 +61,11 @@
                 app:popExitAnim="@anim/to_right"
                 app:popUpTo="@id/step1Fragment"
                 app:popUpToInclusive="true" />
-            <action
+            <!--<action
                 android:id="@+id/action_step1Fragment_to_permissionFragment"
                 app:destination="@id/permissionFragment"
                 app:popUpTo="@id/step1Fragment"
-                app:popUpToInclusive="true" />
+                app:popUpToInclusive="true" />-->
         </fragment>
         <fragment
             android:id="@+id/step2Fragment"

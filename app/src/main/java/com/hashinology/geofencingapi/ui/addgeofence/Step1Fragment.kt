@@ -63,7 +63,7 @@ class Step1Fragment : Fragment() {
     }
 
     private fun onStep1BackClicked() {
-        findNavController().navigate(R.id.action_step1Fragment_to_permissionFragment)
+        findNavController().navigate(R.id.action_step1Fragment_to_mapsFragment)
     }
 
     @SuppressLint("MissingPermission")
